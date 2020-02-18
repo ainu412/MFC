@@ -4,6 +4,7 @@
 
 #pragma once
 
+#define TIMER_TEXT 9122
 
 class CdrawBySingleItemView : public CView
 {
@@ -45,6 +46,14 @@ public:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 protected:
 	CPoint m_pOrigin;
+public:
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+protected:
+	bool m_bDraw = false;
+public:
+	int m_nWidth;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
 
 #ifndef _DEBUG  // drawBySingleItemView.cpp 中的调试版本

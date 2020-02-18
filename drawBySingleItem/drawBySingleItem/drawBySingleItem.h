@@ -34,6 +34,7 @@ public:
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+	int m_nWidth;
 };
 
 extern CdrawBySingleItemApp theApp;

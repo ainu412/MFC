@@ -39,6 +39,7 @@ CdrawBySingleItemApp::CdrawBySingleItemApp() noexcept
 
 	// TODO:  在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
+	m_nWidth = 0;
 }
 
 // 唯一的 CdrawBySingleItemApp 对象
@@ -130,6 +131,9 @@ protected:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+//	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+//	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 CAboutDlg::CAboutDlg() noexcept : CDialogEx(IDD_ABOUTBOX)
@@ -142,6 +146,8 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+//	ON_WM_CREATE()
+//	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // 用于运行对话框的应用程序命令
@@ -172,8 +178,5 @@ void CdrawBySingleItemApp::LoadCustomState()
 void CdrawBySingleItemApp::SaveCustomState()
 {
 }
-
-// CdrawBySingleItemApp 消息处理程序
-
 
 
