@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{93B6E715-1A26-46C7-96D4-A49C1B9B9FBD}</ProjectGuid>
+    <ProjectGuid>{55A80027-C875-4C75-BCC6-A7E894216A09}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
-    <RootNamespace>charSrv</RootNamespace>
+    <RootNamespace>MFCApplication1</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -183,16 +183,16 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="charSrv.h" />
-    <ClInclude Include="charSrvDlg.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="MFCApplication1.h" />
+    <ClInclude Include="MFCApplication1Dlg.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="charSrv.cpp" />
-    <ClCompile Include="charSrvDlg.cpp" />
+    <ClCompile Include="MFCApplication1.cpp" />
+    <ClCompile Include="MFCApplication1Dlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -201,13 +201,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="charSrv.rc" />
+    <ResourceCompile Include="MFCApplication1.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\charSrv.rc2" />
+    <None Include="res\MFCApplication1.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\charSrv.ico" />
+    <Image Include="res\MFCApplication1.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

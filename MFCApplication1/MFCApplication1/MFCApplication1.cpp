@@ -1,59 +1,44 @@
 ﻿
-// charSrv.cpp: 定义应用程序的类行为。
+// MFCApplication1.cpp: 定义应用程序的类行为。
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "charSrv.h"
-#include "charSrvDlg.h"
+#include "MFCApplication1.h"
+#include "MFCApplication1Dlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
-// CcharSrvApp
+// CMFCApplication1App
 
-BEGIN_MESSAGE_MAP(CcharSrvApp, CWinApp)
+BEGIN_MESSAGE_MAP(CMFCApplication1App, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 
-// CcharSrvApp 构造
+// CMFCApplication1App 构造
 
-CcharSrvApp::CcharSrvApp()
+CMFCApplication1App::CMFCApplication1App()
 {
-	// 支持重新启动管理器
-	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
-
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
 }
 
 
-// 唯一的 CcharSrvApp 对象
+// 唯一的 CMFCApplication1App 对象
 
-CcharSrvApp theApp;
+CMFCApplication1App theApp;
 
 
-// CcharSrvApp 初始化
+// CMFCApplication1App 初始化
 
-BOOL CcharSrvApp::InitInstance()
+BOOL CMFCApplication1App::InitInstance()
 {
-	// 如果一个运行在 Windows XP 上的应用程序清单指定要
-	// 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
-	//则需要 InitCommonControlsEx()。  否则，将无法创建窗口。
-	INITCOMMONCONTROLSEX InitCtrls;
-	InitCtrls.dwSize = sizeof(InitCtrls);
-	// 将它设置为包括所有要在应用程序中使用的
-	// 公共控件类。
-	InitCtrls.dwICC = ICC_WIN95_CLASSES;
-	InitCommonControlsEx(&InitCtrls);
-
 	CWinApp::InitInstance();
 
-
-	AfxEnableControlContainer();
 
 	// 创建 shell 管理器，以防对话框包含
 	// 任何 shell 树视图控件或 shell 列表视图控件。
@@ -71,7 +56,7 @@ BOOL CcharSrvApp::InitInstance()
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
 
-	CcharSrvDlg dlg;
+	CMFCApplication1Dlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)

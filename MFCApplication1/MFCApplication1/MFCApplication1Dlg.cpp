@@ -1,11 +1,11 @@
 ﻿
-// charSrvDlg.cpp: 实现文件
+// MFCApplication1Dlg.cpp: 实现文件
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "charSrv.h"
-#include "charSrvDlg.h"
+#include "MFCApplication1.h"
+#include "MFCApplication1Dlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -46,34 +46,33 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CcharSrvDlg 对话框
+// CMFCApplication1Dlg 对话框
 
 
 
-CcharSrvDlg::CcharSrvDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_CHARSRV_DIALOG, pParent)
+CMFCApplication1Dlg::CMFCApplication1Dlg(CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_MFCAPPLICATION1_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CcharSrvDlg::DoDataExchange(CDataExchange* pDX)
+void CMFCApplication1Dlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CcharSrvDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CMFCApplication1Dlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_STOP_BTN, &CcharSrvDlg::OnBnClickedStopBtn)//mark
-
-	ON_BN_CLICKED(IDC_START_BTN, &CcharSrvDlg::OnBnClickedStartBtn)
+	ON_BN_CLICKED(IDC_BUTTON3, &CMFCApplication1Dlg::OnBnClickedButton3)
+	ON_BN_CLICKED(IDC_BTN1, &CMFCApplication1Dlg::OnClickedBtn1)
 END_MESSAGE_MAP()
 
 
-// CcharSrvDlg 消息处理程序
+// CMFCApplication1Dlg 消息处理程序
 
-BOOL CcharSrvDlg::OnInitDialog()
+BOOL CMFCApplication1Dlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -107,7 +106,7 @@ BOOL CcharSrvDlg::OnInitDialog()
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
-void CcharSrvDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CMFCApplication1Dlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -124,7 +123,7 @@ void CcharSrvDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  来绘制该图标。  对于使用文档/视图模型的 MFC 应用程序，
 //  这将由框架自动完成。
 
-void CcharSrvDlg::OnPaint()
+void CMFCApplication1Dlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -151,26 +150,20 @@ void CcharSrvDlg::OnPaint()
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
 //显示。
-HCURSOR CcharSrvDlg::OnQueryDragIcon()
+HCURSOR CMFCApplication1Dlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
 
 
-void CcharSrvDlg::OnBnClickedStopBtn()
+void CMFCApplication1Dlg::OnBnClickedButton3()
 {
-	// TODO: 在此添加控件通知处理程序代码 
-	//mark
-
+	MessageBox(_T("Love you~"));// TODO: 在此添加控件通知处理程序代码
 }
 
 
-void CcharSrvDlg::OnBnClickedStartBtn()
+void CMFCApplication1Dlg::OnClickedBtn1()
 {
-	CString strPort;
-	GetDlgItem(IDC_PORT_EDIT)->GetWindowText(strPort);
-	USES_CONVERSION;
-	LPCSTR cpPort = (LPCSTR)T2A(strPort);
-	TRACE("port:%s", cpPort);
+	MessageBox(_T("I can feel you~"));// TODO: 在此添加控件通知处理程序代码
 }
