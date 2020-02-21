@@ -161,8 +161,6 @@ void CchatUsDlg::OnBnClickedConnectBtn()
 {
 	TRACE("[chatUs]Connect Btn");
 	MessageBoxW(L"喜欢肉肉");
-	MessageBoxW(L"喜欢虾虾");
-
 }
 
 
