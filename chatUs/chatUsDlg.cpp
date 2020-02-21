@@ -159,10 +159,25 @@ HCURSOR CchatUsDlg::OnQueryDragIcon()
 
 void CchatUsDlg::OnBnClickedConnectBtn()
 {
-	TRACE("[chatUs]Connect Btn");
-	MessageBoxW(L"喜欢肉肉");
-	MessageBoxW(L"喜欢虾虾");
+	TRACE("###OnBnClickedConnectBtn");//常用调试手段
+	/*TRACE("[chatUs]Connect Btn");
+	MessageBoxW(L"喜欢肉肉");*/
+	//取得控件显示端口和IP
+	CString strIP, strPort;
+	GetDlgItem(IDC_IPADDRESS)->GetWindowText(strIP);
+	GetDlgItem(IDC_PORT_EDIT)->GetWindowText(strPort);
+	USES_CONVERSION;
+	LPCSTR cpIP = (LPCSTR)T2A(strIP);
+	LPCSTR cpPort = (LPCSTR)T2A(strPort);
+	TRACE("[chatUs]IP:%s, port:%s", cpIP, cpPort);
 
+	////创建socket对象
+	//m_sockCli = new CMySocket;
+	////创建套接字
+	//m_sockCli->Create();
+	////连接
+	//int iPort = _ttoi(strPort);
+	//m_sockCli->Connect(strIP, iPort);
 }
 
 

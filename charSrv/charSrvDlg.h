@@ -1,20 +1,20 @@
 ﻿
-// MFCApplication1Dlg.h: 头文件
+// charSrvDlg.h: 头文件
 //
 
 #pragma once
 
-
-// CMFCApplication1Dlg 对话框
-class CMFCApplication1Dlg : public CDialogEx
+#include <atlconv.h>
+// CcharSrvDlg 对话框
+class CcharSrvDlg : public CDialogEx
 {
 // 构造
 public:
-	CMFCApplication1Dlg(CWnd* pParent = nullptr);	// 标准构造函数
+	CcharSrvDlg(CWnd* pParent = nullptr);	// 标准构造函数
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_MFCAPPLICATION1_DIALOG };
+	enum { IDD = IDD_CHARSRV_DIALOG };
 #endif
 
 	protected:
@@ -32,6 +32,6 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedButton3();
-	afx_msg void OnClickedBtn1();
+	afx_msg void OnBnClickedStopBtn();//mark
+	afx_msg void OnBnClickedStartBtn();
 };

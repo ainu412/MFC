@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MFCApplication1.h">
+    <ClInclude Include="charSrv.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MFCApplication1Dlg.h">
+    <ClInclude Include="charSrvDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
@@ -35,10 +35,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MFCApplication1.cpp">
+    <ClCompile Include="charSrv.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MFCApplication1Dlg.cpp">
+    <ClCompile Include="charSrvDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
@@ -46,17 +46,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MFCApplication1.rc">
+    <ResourceCompile Include="charSrv.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\MFCApplication1.rc2">
+    <None Include="res\charSrv.rc2">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\MFCApplication1.ico">
+    <Image Include="res\charSrv.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
