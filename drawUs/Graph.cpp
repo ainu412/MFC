@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "Graph.h"
 
+IMPLEMENT_SERIAL(Graph, CObject, 1);
+
+Graph::Graph()
+{
+}
+
 Graph::Graph(DRAW_TYPE m_eDrawType, COLORREF m_cColref, int m_nLineWidth, int m_nLineStyle, int m_nMissMe):
 	m_eDrawType(m_eDrawType), m_cColref(m_cColref), m_nLineWidth(m_nLineWidth), m_nLineStyle(m_nLineStyle),
 	m_nMissMe(m_nMissMe)
@@ -52,7 +58,7 @@ void Graph::draw(CDC* pDC)
 	//若为画笔,画两点间连线
 	else
 	{
-		for (size_t i = 0; i < m_pPoints.GetSize();)
+		for (int i = 0; i < m_pPoints.GetSize();)
 		{
 			pDC->MoveTo(m_pPoints.GetAt(i));
 
@@ -64,4 +70,24 @@ void Graph::draw(CDC* pDC)
 	}
 
 	pDC->SelectObject(pOldPen);
+}
+
+
+void Graph::Serialize(CArchive& ar)
+{
+	if (ar.IsStoring())
+	{	
+		ar  << int(m_eDrawType) << m_cColref
+			<< m_nLineWidth	<< m_nLineStyle
+			<< m_nMissMe;
+	}
+	else
+	{	
+		int tmp;
+		ar  >> tmp >> m_cColref
+			>> m_nLineWidth >> m_nLineStyle
+			>> m_nMissMe;
+		m_eDrawType = (DRAW_TYPE)tmp;
+	}
+	m_pPoints.Serialize(ar);
 }

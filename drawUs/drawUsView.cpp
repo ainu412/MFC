@@ -52,6 +52,11 @@ CdrawUsView::CdrawUsView() noexcept
 
 CdrawUsView::~CdrawUsView()
 {
+	int cnt = m_pGraphs.GetSize();
+	while (cnt--) {
+		delete m_pGraphs.GetAt(cnt);
+	}
+	m_pGraphs.RemoveAll();
 }
 
 BOOL CdrawUsView::PreCreateWindow(CREATESTRUCT& cs)
@@ -74,10 +79,10 @@ void CdrawUsView::OnDraw(CDC* pDC)
 		return;
 
 	// TODO: 在此处为本机数据添加绘制代码
-	//重绘
-	for (size_t i = 0; i < m_pGraphs.GetSize(); i++)
+	// 实现重绘
+	for (int i = 0; i < m_pGraphs.GetSize(); i++)
 	{
-		m_pGraphs.GetAt(i)->draw(pDC);
+		((Graph*)m_pGraphs.GetAt(i))->draw(pDC);
 	}
 }
 

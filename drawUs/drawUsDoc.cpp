@@ -17,6 +17,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#include "drawUsView.h"
 
 // CdrawUsDoc
 
@@ -56,14 +57,30 @@ BOOL CdrawUsDoc::OnNewDocument()
 
 void CdrawUsDoc::Serialize(CArchive& ar)
 {
-	if (ar.IsStoring())
-	{
-		// TODO:  在此添加存储代码
-	}
-	else
-	{
-		// TODO:  在此添加加载代码
-	}
+	POSITION pos = GetFirstViewPosition();
+	CdrawUsView* pView = (CdrawUsView*)GetNextView(pos);
+	//int cnt;
+	//if (ar.IsStoring())
+	//{
+	//	cnt = pView->m_pGraphs.GetSize();
+	//	ar << cnt;
+	//	for (size_t i = 0; i < cnt; i++)
+	//	{
+	//		ar << pView->m_pGraphs.GetAt(i);
+	//	}
+	//}
+	//else
+	//{
+	//	ar >> cnt;
+	//	for (size_t i = 0; i < cnt; i++)
+	//	{
+	//		//依次读取数据，加入pView->m_pGraphs数组中
+	//		Graph* gh;
+	//		ar >> gh;
+	//		pView->m_pGraphs.Add(gh);
+	//	}
+	//}
+	pView->m_pGraphs.Serialize(ar);
 }
 
 #ifdef SHARED_HANDLERS

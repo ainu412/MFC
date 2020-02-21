@@ -72,8 +72,10 @@ public:
 protected:
 	//存有一次鼠标按抬形成的图形
 	Graph* m_pTmpGraph;
+public:
 	//存有所有图形的数组
-	CArray<Graph*> m_pGraphs;//存储类对象指针,节约空间
+	//CArray<Graph*> m_pGraphs;//存储类对象指针,节约空间;doc中序列化需访问
+	CObArray m_pGraphs;
 };
 
 #ifndef _DEBUG  // drawUsView.cpp 中的调试版本
