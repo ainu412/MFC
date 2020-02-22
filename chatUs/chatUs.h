@@ -5,6 +5,8 @@
 #pragma once
 
 #define SEND_MAX_BUF 1024
+#define NAME_MAX_BUF 32
+
 #ifndef __AFXWIN_H__
 	#error "在包含此文件之前包含 'pch.h' 以生成 PCH"
 #endif

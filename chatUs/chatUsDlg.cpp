@@ -69,6 +69,7 @@ BEGIN_MESSAGE_MAP(CchatUsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CONNECT_BTN, &CchatUsDlg::OnBnClickedConnectBtn)
 	ON_BN_CLICKED(IDC_DISCONNECT_BTN, &CchatUsDlg::OnBnClickedDisconnectBtn)
 	ON_BN_CLICKED(IDC_SEND_BTN, &CchatUsDlg::OnBnClickedSendBtn)
+	ON_BN_CLICKED(IDC_NAME_BTN, &CchatUsDlg::OnBnClickedNameBtn)
 END_MESSAGE_MAP()
 
 
@@ -107,6 +108,30 @@ BOOL CchatUsDlg::OnInitDialog()
 	GetDlgItem(IDC_IPADDRESS)->SetWindowText(_T("127.0.0.1"));
 	GetDlgItem(IDC_PORT_EDIT)->SetWindowText(_T("5000"));
 
+	//显示当前昵称,每次打开时从配置文件中读取
+	//LPWSTR cpCurPath;
+	WCHAR cpCurPath[MAX_PATH] = { 0 };
+	CString strFilePath;
+	GetCurrentDirectory(MAX_PATH, cpCurPath);
+	strFilePath.Format(L"%ls//ClientNickname.ini", cpCurPath);
+
+	TRACE(L"file open path:%s", strFilePath);
+
+	WCHAR cpName[NAME_MAX_BUF] = { 0 };
+	int i = GetPrivateProfileStringW(L"CLIENT", L"NICKNAME", NULL, cpName, NAME_MAX_BUF, strFilePath);
+
+	if (!i)
+	{
+		SetDlgItemText(IDC_NICKNAME_EDIT, L"未设置");
+		m_name = "客户端";
+	}
+	else
+	{
+		// 显示至控件
+		SetDlgItemText(IDC_NICKNAME_EDIT, cpName);
+		m_name = cpName;
+		TRACE(L"file read name:%s", cpName);
+	}
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -203,25 +228,60 @@ void CchatUsDlg::OnBnClickedSendBtn()
 {
 	CString strShow;
 	// 1.获取编辑框内容
-	GetDlgItem(IDC_RESMSG_EDIT)->GetWindowTextW(strShow);
+	//GetDlgItem(IDC_RESMSG_EDIT)->GetWindowTextW(strShow);
+	GetDlgItemText(IDC_RESMSG_EDIT, strShow);
+
 	USES_CONVERSION;
-	char* cpMsg = T2A(strShow);
+	char* cpMsg = T2A(m_name + _T(": ") + strShow);
 
-	// 2.发送给服务端(记得转为char*发送)
+	// 2.发送给服务端
 
-	// 点发送后为啥没有接收呢??发送成功了啊..
 	m_sockCli->Send(cpMsg, SEND_MAX_BUF, 0);
 
 	TRACE("[chatUsDlg]OnBnClickedSendBtn() send characters: %s", cpMsg);
 
 	// 3.显示到m_list框
 	CTime m_time = CTime::GetCurrentTime();
-	strShow = m_time.Format("%X") + _T("我: ") + strShow;
+	strShow = m_time.Format("%X") + m_name + _T(": ") + strShow;
 	m_msgListBox.AddString(strShow);
 
 	UpdateData(FALSE);
 
 	//清空m_list框
-	GetDlgItem(IDC_RESMSG_EDIT)->SetWindowTextW(_T(""));
+	//GetDlgItem(IDC_RESMSG_EDIT)->SetWindowTextW(_T(""));
+	SetDlgItemText(IDC_RESMSG_EDIT, L"");
+}
 
+
+void CchatUsDlg::OnBnClickedNameBtn()
+{
+	// 获取填写名称
+	CString strName;
+	GetDlgItemText(IDC_NICKNAME_EDIT, strName);
+	
+	if (strName.GetLength() > 0 && strName.GetLength() < NAME_MAX_BUF 
+		&& IDOK==AfxMessageBox(_T("确定修改昵称吗?"), MB_OKCANCEL) )//MB_OKCANCEL
+	{
+		// 获得当前目录所在路径
+		//LPWSTR cpCurPath;
+		WCHAR cpCurPath[MAX_PATH] = { 0 };
+		GetCurrentDirectory(MAX_PATH, cpCurPath);		
+
+		TRACE(L"current directory:%s", cpCurPath);
+
+		// 将配置文件命名并存入当前目录
+		CString strFilePath; 
+		strFilePath.Format(L"%ls//ClientNickname.ini", cpCurPath);
+
+		TRACE(L"file path:%s", strFilePath);
+
+		// 写入配置文件
+		WritePrivateProfileStringW(L"CLIENT", L"NICKNAME", strName, strFilePath);
+
+		m_name = strName;
+	}
+	else if (strName.GetLength() <= 0)
+	{
+		MessageBoxW(L"昵称不能为空!");
+	}
 }

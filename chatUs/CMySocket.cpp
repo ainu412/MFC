@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CMySocket.h"
+#include "chatUs.h"
 #include "chatUsDlg.h"
 
 CMySocket::CMySocket()
@@ -35,7 +36,7 @@ void CMySocket::OnReceive(int nErrorCode)
 	//转为CString
 	USES_CONVERSION;
 	CString strRecv = A2W(cpRecvBuf);
-
+	
 	CTime m_time = CTime::GetCurrentTime();
 	strRecv = m_time.Format("%X") + "服务端发送: " + strRecv;
 
@@ -46,4 +47,17 @@ void CMySocket::OnReceive(int nErrorCode)
 
 	//回调父类函数
 	CAsyncSocket::OnReceive(nErrorCode);
+
+	// 实现自动回复
+	// 判断是否勾选自动回复
+	if (((CButton*)(dlg->GetDlgItem(IDC_AUTORESPONSE_RADIO)))->GetCheck())
+	{
+		// 获得自动回复框内容
+		CString strAuto;
+		dlg->GetDlgItemText(IDC_AUTORESMSG_EDIT, strAuto);
+		// 添加
+		Send(" ", SEND_MAX_BUF, 0);
+
+	}
+
 }

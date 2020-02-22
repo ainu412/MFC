@@ -17,6 +17,7 @@ void CSockChat::OnReceive(int nErrorCode)
 	CchatSrvDlg* dlg = (CchatSrvDlg*)AfxGetApp()->GetMainWnd();
 	char recvBuf[SEND_MAX_BUF] = { 0 };//临时存储,不分配内存
 	Receive(recvBuf, SEND_MAX_BUF, 0);
+
 	TRACE("####Server szRecvBuf = %s", recvBuf);
 
 	USES_CONVERSION;
@@ -24,7 +25,7 @@ void CSockChat::OnReceive(int nErrorCode)
 
 	// 显示到服务端列表框
 	CTime m_time = CTime::GetCurrentTime();
-	msg = m_time.Format("%X") + _T("服务端收到: ") + msg;
+	msg = m_time.Format("%X") + msg;
 
 	dlg->m_msgListBox.AddString(msg);
 	//dlg->UpdateData(FALSE);

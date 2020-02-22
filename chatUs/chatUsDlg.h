@@ -38,4 +38,6 @@ public:
 	CMySocket* m_sockCli;
 	CListBox m_msgListBox;
 	afx_msg void OnBnClickedSendBtn();
+	afx_msg void OnBnClickedNameBtn();
+	CString m_name;
 };
