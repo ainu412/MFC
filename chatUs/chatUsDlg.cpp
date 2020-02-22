@@ -178,7 +178,14 @@ void CchatUsDlg::OnBnClickedConnectBtn()
 	//创建socket对象
 	m_sockCli = new CMySocket;
 	//创建套接字
-	m_sockCli->Create();
+	if (!m_sockCli->Create())
+	{
+		TRACE("m_sockCli create error: %d", GetLastError());
+	}
+	else
+	{
+		TRACE("m_sockCLi create success");
+	}
 	//连接
 	int iPort = _ttoi(strPort);
 	m_sockCli->Connect(strIP, iPort);

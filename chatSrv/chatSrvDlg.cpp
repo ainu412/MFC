@@ -170,7 +170,23 @@ void CchatSrvDlg::OnBnClickedStartBtn()
 	TRACE("[chatSrv]port:%s", cpPort);
 	int iPort = _ttoi(strPort);
 
+	//CSockSrv建立服务,在CSockSrv的accept内创建CSockChat
 	m_sockSrv = new CSockSrv;
-	m_sockSrv->Create(iPort);
-	m_sockSrv->Listen();
+	if (!m_sockSrv->Create(iPort))
+	{
+		TRACE("m_sockSrv create error:%d", GetLastError());
+		return;
+	}
+	
+	if (!m_sockSrv->Listen())
+	{
+		TRACE("m_sockSrv listen error:%d", GetLastError());
+		return;
+	}
+	m_time = CTime::GetCurrentTime();
+	CString str_tm = m_time.Format("%X");
+	str_tm += _T("建立服务");
+	m_msgListBox.AddString(str_tm);
+
+	UpdateData(FALSE);//??把控件上内容更新至数据??
 }

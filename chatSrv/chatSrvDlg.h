@@ -4,7 +4,9 @@
 
 #pragma once
 #include "CSockSrv.h"
+#include "CSockChat.h"
 class CSockSrv;
+class CSockChat;
 // CchatSrvDlg 对话框
 class CchatSrvDlg : public CDialogEx
 {
@@ -34,6 +36,7 @@ protected:
 public:
 	afx_msg void OnBnClickedStartBtn();
 	CListBox m_msgListBox;
-private:
+	CTime m_time;
+	CSockChat* m_sockChat;
 	CSockSrv* m_sockSrv;
 };
