@@ -27,4 +27,6 @@ void CMySocket::OnConnect(int nErrorCode)
 
 void CMySocket::OnReceive(int nErrorCode)
 {
+	TRACE("####OnReceive");
+
 }

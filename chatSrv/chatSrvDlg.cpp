@@ -31,6 +31,8 @@ public:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
+private:
+	CSockSrv m_sockSrv;
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -59,6 +61,7 @@ CchatSrvDlg::CchatSrvDlg(CWnd* pParent /*=nullptr*/)
 void CchatSrvDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_MSG_LIST, m_msgListBox);
 }
 
 BEGIN_MESSAGE_MAP(CchatSrvDlg, CDialogEx)
@@ -101,6 +104,8 @@ BOOL CchatSrvDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	GetDlgItem(IDC_PORT_EDIT)->SetWindowText(_T("5000"));
+
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -163,4 +168,9 @@ void CchatSrvDlg::OnBnClickedStartBtn()
 	USES_CONVERSION;
 	LPCSTR cpPort = (LPCSTR)T2A(strPort);
 	TRACE("[chatSrv]port:%s", cpPort);
+	int iPort = _ttoi(strPort);
+
+	//m_sockSrv = new CSockSrv;
+	//m_sockSrv->Create(iPort);
+	//m_sockSrv->Listen();
 }

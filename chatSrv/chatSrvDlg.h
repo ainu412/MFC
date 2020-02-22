@@ -3,8 +3,8 @@
 //
 
 #pragma once
-
-
+#include "CSockSrv.h"
+class CSockSrv;
 // CchatSrvDlg 对话框
 class CchatSrvDlg : public CDialogEx
 {
@@ -33,4 +33,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedStartBtn();
+	CListBox m_msgListBox;
+private:
+	CSockSrv* m_sockSrv;
 };
