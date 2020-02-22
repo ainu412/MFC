@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{71BA5EE0-8B3A-4764-84D5-98E8CF545626}</ProjectGuid>
+    <ProjectGuid>{3014553E-C82E-474F-9ABA-C8839299B7B4}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
-    <RootNamespace>chatUs</RootNamespace>
+    <RootNamespace>chatSrv</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -183,18 +183,16 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="chatUs.h" />
-    <ClInclude Include="chatUsDlg.h" />
-    <ClInclude Include="CMySocket.h" />
+    <ClInclude Include="chatSrv.h" />
+    <ClInclude Include="chatSrvDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="chatUs.cpp" />
-    <ClCompile Include="chatUsDlg.cpp" />
-    <ClCompile Include="CMySocket.cpp" />
+    <ClCompile Include="chatSrv.cpp" />
+    <ClCompile Include="chatSrvDlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -203,13 +201,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="chatUs.rc" />
+    <ResourceCompile Include="chatSrv.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\chatUs.rc2" />
+    <None Include="res\chatSrv.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\chatUs.ico" />
+    <Image Include="res\chatSrv.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

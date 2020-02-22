@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="chatUs.h">
+    <ClInclude Include="chatSrv.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="chatUsDlg.h">
+    <ClInclude Include="chatSrvDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
@@ -33,36 +33,30 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CMySocket.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="chatUs.cpp">
+    <ClCompile Include="chatSrv.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="chatUsDlg.cpp">
+    <ClCompile Include="chatSrvDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CMySocket.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="chatUs.rc">
+    <ResourceCompile Include="chatSrv.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\chatUs.rc2">
+    <None Include="res\chatSrv.rc2">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\chatUs.ico">
+    <Image Include="res\chatSrv.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

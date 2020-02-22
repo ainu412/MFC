@@ -1,21 +1,20 @@
 ﻿
-// chatUsDlg.h: 头文件
+// chatSrvDlg.h: 头文件
 //
 
 #pragma once
-#include "CMySocket.h"
 
 
-// CchatUsDlg 对话框
-class CchatUsDlg : public CDialogEx
+// CchatSrvDlg 对话框
+class CchatSrvDlg : public CDialogEx
 {
 // 构造
 public:
-	CchatUsDlg(CWnd* pParent = nullptr);	// 标准构造函数
+	CchatSrvDlg(CWnd* pParent = nullptr);	// 标准构造函数
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_CHATUS_DIALOG };
+	enum { IDD = IDD_CHATSRV_DIALOG };
 #endif
 
 	protected:
@@ -33,9 +32,5 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedConnectBtn();
-	afx_msg void OnBnClickedDisconnectBtn();
-	CMySocket* m_sockCli;
-	CTime m_time;
-	CListBox m_msgListBox;
+	afx_msg void OnBnClickedStartBtn();
 };

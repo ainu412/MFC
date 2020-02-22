@@ -1,11 +1,11 @@
 ﻿
-// chatUsDlg.cpp: 实现文件
+// chatSrvDlg.cpp: 实现文件
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "chatUs.h"
-#include "chatUsDlg.h"
+#include "chatSrv.h"
+#include "chatSrvDlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -46,34 +46,32 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CchatUsDlg 对话框
+// CchatSrvDlg 对话框
 
 
 
-CchatUsDlg::CchatUsDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_CHATUS_DIALOG, pParent)
+CchatSrvDlg::CchatSrvDlg(CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_CHATSRV_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CchatUsDlg::DoDataExchange(CDataExchange* pDX)
+void CchatSrvDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_CHATMSG_LIST, m_msgListBox);
 }
 
-BEGIN_MESSAGE_MAP(CchatUsDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CchatSrvDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_CONNECT_BTN, &CchatUsDlg::OnBnClickedConnectBtn)
-	ON_BN_CLICKED(IDC_DISCONNECT_BTN, &CchatUsDlg::OnBnClickedDisconnectBtn)
+	ON_BN_CLICKED(IDC_START_BTN, &CchatSrvDlg::OnBnClickedStartBtn)
 END_MESSAGE_MAP()
 
 
-// CchatUsDlg 消息处理程序
+// CchatSrvDlg 消息处理程序
 
-BOOL CchatUsDlg::OnInitDialog()
+BOOL CchatSrvDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -107,7 +105,7 @@ BOOL CchatUsDlg::OnInitDialog()
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
-void CchatUsDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CchatSrvDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -124,7 +122,7 @@ void CchatUsDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  来绘制该图标。  对于使用文档/视图模型的 MFC 应用程序，
 //  这将由框架自动完成。
 
-void CchatUsDlg::OnPaint()
+void CchatSrvDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -151,39 +149,18 @@ void CchatUsDlg::OnPaint()
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
 //显示。
-HCURSOR CchatUsDlg::OnQueryDragIcon()
+HCURSOR CchatSrvDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
 
 
-void CchatUsDlg::OnBnClickedConnectBtn()
+void CchatSrvDlg::OnBnClickedStartBtn()
 {
-	TRACE("###OnBnClickedConnectBtn");//常用调试手段
-	/*TRACE("[chatUs]Connect Btn");
-	MessageBoxW(L"喜欢肉肉");*/
-	//取得控件显示端口和IP
 	CString strIP, strPort;
-	GetDlgItem(IDC_IPADDRESS)->GetWindowText(strIP);
 	GetDlgItem(IDC_PORT_EDIT)->GetWindowText(strPort);
 	USES_CONVERSION;
-	LPCSTR cpIP = (LPCSTR)T2A(strIP);
 	LPCSTR cpPort = (LPCSTR)T2A(strPort);
-	TRACE("[chatUs]IP:%s, port:%s", cpIP, cpPort);
-
-	//创建socket对象
-	m_sockCli = new CMySocket;
-	//创建套接字
-	m_sockCli->Create();
-	//连接
-	int iPort = _ttoi(strPort);
-	m_sockCli->Connect(strIP, iPort);
-
-}
-
-
-void CchatUsDlg::OnBnClickedDisconnectBtn()
-{
-	// TODO: 在此添加控件通知处理程序代码
+	TRACE("[chatSrv]port:%s", cpPort);
 }
