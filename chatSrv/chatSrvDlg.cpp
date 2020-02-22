@@ -170,7 +170,7 @@ void CchatSrvDlg::OnBnClickedStartBtn()
 	TRACE("[chatSrv]port:%s", cpPort);
 	int iPort = _ttoi(strPort);
 
-	//m_sockSrv = new CSockSrv;
-	//m_sockSrv->Create(iPort);
-	//m_sockSrv->Listen();
+	m_sockSrv = new CSockSrv;
+	m_sockSrv->Create(iPort);
+	m_sockSrv->Listen();
 }
