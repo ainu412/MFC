@@ -209,6 +209,9 @@
     <None Include="res\chatUs.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Pictures\Nagato_watchback.bmp" />
+    <Image Include="..\..\..\..\Pictures\Saved Pictures\Nagato_watchback.jpg" />
+    <Image Include="res\bitmap1.bmp" />
     <Image Include="res\chatUs.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

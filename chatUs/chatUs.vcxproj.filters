@@ -65,5 +65,14 @@
     <Image Include="res\chatUs.ico">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="res\bitmap1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Pictures\Saved Pictures\Nagato_watchback.jpg">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Pictures\Nagato_watchback.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

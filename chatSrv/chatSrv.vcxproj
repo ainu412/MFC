@@ -211,6 +211,8 @@
     <None Include="res\chatSrv.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Pictures\NagatoYuki_wizard.bmp" />
+    <Image Include="res\bitmap1.bmp" />
     <Image Include="res\chatSrv.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -38,26 +38,35 @@ void CMySocket::OnReceive(int nErrorCode)
 	CString strRecv = A2W(cpRecvBuf);
 	
 	CTime m_time = CTime::GetCurrentTime();
-	strRecv = m_time.Format("%X") + "服务端发送: " + strRecv;
+	strRecv = m_time.Format("%X") + strRecv;
 
 	// 输出到对话框的listBox
 	CchatUsDlg* dlg = (CchatUsDlg*)AfxGetApp()->GetMainWnd();
 
 	dlg->m_msgListBox.AddString(strRecv);//按字符排序的,故需要在前面添加时间,以便按顺序排列
+	dlg->m_msgListBox.UpdateData(FALSE);
 
 	//回调父类函数
 	CAsyncSocket::OnReceive(nErrorCode);
 
 	// 实现自动回复
+	// 获得自动回复框内容
+	CString strAuto;
+	dlg->GetDlgItemText(IDC_AUTORESMSG_EDIT, strAuto);
+
 	// 判断是否勾选自动回复
-	if (((CButton*)(dlg->GetDlgItem(IDC_AUTORESPONSE_RADIO)))->GetCheck())
+	if (((CButton*)(dlg->GetDlgItem(IDC_AUTORESPONSE_RADIO)))->GetCheck()
+		&& strAuto.GetLength() > 0)
 	{
-		// 获得自动回复框内容
-		CString strAuto;
-		dlg->GetDlgItemText(IDC_AUTORESMSG_EDIT, strAuto);
-		// 添加
-		Send(" ", SEND_MAX_BUF, 0);
+		// 组格式
+		strAuto = dlg->m_name + _T("[自动回复]: ") + strAuto;
+		// 自动回复
+		//USES_CONVERSION;
+		LPWSTR cpAuto = (LPWSTR)T2A(strAuto);
+		Send(cpAuto, SEND_MAX_BUF, 0);//Or dlg->m_sockCli->Send
 
+		// 显示到本地listBox
+		dlg->m_msgListBox.AddString(m_time.Format("%X") + strAuto);
+		dlg->m_msgListBox.UpdateData(FALSE);
 	}
-
 }

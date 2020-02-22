@@ -39,4 +39,12 @@ public:
 	CSockChat* m_sockChat;
 	CSockSrv* m_sockSrv;
 	afx_msg void OnBnClickedSendBtn();
+	afx_msg void OnBnClickedStopBtn();
+	afx_msg void OnBnClickedClsBtn();
+	CComboBox m_fontColorCombo;
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnBnClickedCalBtn();
+	afx_msg void OnBnClickedEmailBtn();
+	afx_msg void OnBnClickedQqBtn();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

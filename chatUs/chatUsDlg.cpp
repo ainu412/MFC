@@ -60,6 +60,7 @@ void CchatUsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_CHATMSG_LIST, m_msgListBox);
+	DDX_Control(pDX, IDC_FONTCOLOR_COMBO, m_fontColorCombo);
 }
 
 BEGIN_MESSAGE_MAP(CchatUsDlg, CDialogEx)
@@ -70,6 +71,9 @@ BEGIN_MESSAGE_MAP(CchatUsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_DISCONNECT_BTN, &CchatUsDlg::OnBnClickedDisconnectBtn)
 	ON_BN_CLICKED(IDC_SEND_BTN, &CchatUsDlg::OnBnClickedSendBtn)
 	ON_BN_CLICKED(IDC_NAME_BTN, &CchatUsDlg::OnBnClickedNameBtn)
+	ON_BN_CLICKED(IDC_AUTORESPONSE_RADIO, &CchatUsDlg::OnBnClickedAutoresponseRadio)
+	ON_BN_CLICKED(IDC_CLS_BTN, &CchatUsDlg::OnBnClickedClsBtn)
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -133,6 +137,19 @@ BOOL CchatUsDlg::OnInitDialog()
 		TRACE(L"file read name:%s", cpName);
 	}
 
+	// 设置按钮初态是否可用
+	GetDlgItem(IDC_SEND_BTN)->EnableWindow(FALSE);
+	GetDlgItem(IDC_CONNECT_BTN)->EnableWindow(TRUE);
+	GetDlgItem(IDC_DISCONNECT_BTN)->EnableWindow(FALSE);
+	GetDlgItem(IDC_AUTORESPONSE_RADIO)->EnableWindow(FALSE);
+
+	// 添加字体颜色
+	m_fontColorCombo.AddString(_T("黑色"));
+	m_fontColorCombo.AddString(_T("蓝色"));
+	m_fontColorCombo.AddString(_T("绿色"));
+	m_fontColorCombo.AddString(_T("红色"));
+	m_fontColorCombo.SetCurSel(0);
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -174,6 +191,24 @@ void CchatUsDlg::OnPaint()
 	}
 	else
 	{
+		CPaintDC dc(this);
+		CRect rect;
+		GetClientRect(&rect);
+
+		CDC dcBmp;
+		dcBmp.CreateCompatibleDC(&dcBmp);
+
+		CBitmap cBmp;
+		cBmp.LoadBitmap(IDB_BITMAP1);
+
+		BITMAP Bmp;
+		cBmp.GetBitmap(&Bmp);
+
+		CBitmap* pOldBmp = dcBmp.SelectObject(&cBmp);
+
+		dc.StretchBlt(0, 0, rect.Width(), rect.Width(), &dcBmp, 
+			0, 0, Bmp.bmWidth, Bmp.bmHeight, SRCCOPY);
+
 		CDialogEx::OnPaint();
 	}
 }
@@ -189,6 +224,11 @@ HCURSOR CchatUsDlg::OnQueryDragIcon()
 
 void CchatUsDlg::OnBnClickedConnectBtn()
 {
+	GetDlgItem(IDC_SEND_BTN)->EnableWindow(TRUE);
+	GetDlgItem(IDC_CONNECT_BTN)->EnableWindow(FALSE);
+	GetDlgItem(IDC_DISCONNECT_BTN)->EnableWindow(TRUE);
+	GetDlgItem(IDC_AUTORESPONSE_RADIO)->EnableWindow(TRUE);
+
 	TRACE("###OnBnClickedConnectBtn");//常用调试手段
 	/*TRACE("[chatUs]Connect Btn");
 	MessageBoxW(L"喜欢肉肉");*/
@@ -220,7 +260,25 @@ void CchatUsDlg::OnBnClickedConnectBtn()
 
 void CchatUsDlg::OnBnClickedDisconnectBtn()
 {
-	// TODO: 在此添加控件通知处理程序代码
+	// 1.切换按钮显示
+	GetDlgItem(IDC_SEND_BTN)->EnableWindow(FALSE);
+	GetDlgItem(IDC_CONNECT_BTN)->EnableWindow(TRUE);
+	GetDlgItem(IDC_DISCONNECT_BTN)->EnableWindow(FALSE);
+	GetDlgItem(IDC_AUTORESPONSE_RADIO)->EnableWindow(FALSE);
+
+	// 2.发送信息给服务端
+	USES_CONVERSION;
+	char* cpMsg = T2A(L"用户[" + m_name + _T("]已断开"));
+	m_sockCli->Send(cpMsg, SEND_MAX_BUF, 0);
+	// 3.清理资源
+	m_sockCli->Close();
+	if (m_sockCli!=NULL)
+	{
+		delete m_sockCli;
+		m_sockCli = NULL;
+	}
+	// 4.在客户端屏幕显示断开
+	m_msgListBox.AddString(_T("已断开!"));
 }
 
 
@@ -284,4 +342,89 @@ void CchatUsDlg::OnBnClickedNameBtn()
 	{
 		MessageBoxW(L"昵称不能为空!");
 	}
+}
+
+
+void CchatUsDlg::OnBnClickedAutoresponseRadio()
+{
+	if (((CButton*)GetDlgItem(IDC_AUTORESPONSE_RADIO))->GetCheck())
+	{
+		((CButton*)GetDlgItem(IDC_AUTORESPONSE_RADIO))->SetCheck(FALSE);
+	} 
+	else
+	{
+		((CButton*)GetDlgItem(IDC_AUTORESPONSE_RADIO))->SetCheck(TRUE);
+	}
+}
+
+
+void CchatUsDlg::OnBnClickedClsBtn()
+{
+	m_msgListBox.ResetContent();
+}
+
+
+HBRUSH CchatUsDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialogEx::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	CString strCol;
+	m_fontColorCombo.GetWindowTextW(strCol);
+	if (IDC_RESMSG_EDIT==pWnd->GetDlgCtrlID() 
+		|| IDC_CHATMSG_LIST==pWnd->GetDlgCtrlID())
+	{
+		if (L"黑色" == strCol)
+		{
+			pDC->SetTextColor(RGB(0, 0, 0));
+		}
+		else if (L"红色" == strCol)
+		{
+			pDC->SetTextColor(RGB(255, 0, 0));
+		}
+		else if (L"绿色" == strCol)
+		{
+			pDC->SetTextColor(RGB(0, 255, 0));
+		}
+		else if (L"蓝色" == strCol)
+		{
+			pDC->SetTextColor(RGB(0, 0, 255));
+		}
+	}
+	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
+	return hbr;
+}
+
+
+BOOL CchatUsDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// 规避回车键
+	//if (pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_RETURN)
+	//{
+	//	TRACE("回车");
+	//	return TRUE;
+	//}
+	// 规避空格键
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_SPACE)
+	{
+		TRACE("回车");
+		return TRUE;
+	}
+	// 组合键ctrl+X退出
+	if (pMsg->message == WM_KEYDOWN && GetKeyState(VK_CONTROL) < 0)
+	{
+		TRACE("按下Ctrl键");
+		if (pMsg->wParam == 'X')
+		{
+			TRACE("按下Ctrl+X");
+			// 关闭对话框
+			CDialogEx::OnOK();
+		}
+	}
+	// 回车发送消息
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+	{
+		OnBnClickedSendBtn();
+		return TRUE;//规避回车关闭对话框
+	}
+	return CDialogEx::PreTranslateMessage(pMsg);
 }

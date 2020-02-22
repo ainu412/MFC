@@ -7,6 +7,7 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_CHATSRV_DIALOG              102
 #define IDR_MAINFRAME                   128
+#define IDB_BITMAP1                     131
 #define IDC_CLS_BTN                     1000
 #define IDC_MSG_LIST                    1002
 #define IDC_MSG_EDIT                    1003
@@ -23,7 +24,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        130
+#define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           101

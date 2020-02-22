@@ -40,4 +40,9 @@ public:
 	afx_msg void OnBnClickedSendBtn();
 	afx_msg void OnBnClickedNameBtn();
 	CString m_name;
+	afx_msg void OnBnClickedAutoresponseRadio();
+	afx_msg void OnBnClickedClsBtn();
+	CComboBox m_fontColorCombo;
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

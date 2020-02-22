@@ -7,6 +7,7 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_CHATUS_DIALOG               102
 #define IDR_MAINFRAME                   128
+#define IDB_BITMAP1                     133
 #define IDC_PORT_EDIT                   1001
 #define IDC_RESMSG_EDIT                 1002
 #define IDC_AUTORESMSG_EDIT             1003
@@ -18,7 +19,6 @@
 #define IDC_CONNECT_BTN                 1009
 #define IDC_CLS_BTN                     1010
 #define IDC_IPADDRESS                   1011
-#define IDC_EDIT1                       1012
 #define IDC_NICKNAME_EDIT               1012
 #define IDC_NAME_BTN                    1013
 
@@ -26,7 +26,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        130
+#define _APS_NEXT_RESOURCE_VALUE        134
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1014
 #define _APS_NEXT_SYMED_VALUE           101
