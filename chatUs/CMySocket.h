@@ -1,5 +1,8 @@
 #pragma once
 #include <afxsock.h>
+
+#define SEND_MAX_BUF 1024
+
 class CMySocket :
 	public CAsyncSocket
 {

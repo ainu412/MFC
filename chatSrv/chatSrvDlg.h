@@ -36,7 +36,7 @@ protected:
 public:
 	afx_msg void OnBnClickedStartBtn();
 	CListBox m_msgListBox;
-	CTime m_time;
 	CSockChat* m_sockChat;
 	CSockSrv* m_sockSrv;
+	afx_msg void OnBnClickedSendBtn();
 };

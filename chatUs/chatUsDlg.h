@@ -3,8 +3,8 @@
 //
 
 #pragma once
+#include <atlconv.h>
 #include "CMySocket.h"
-
 
 // CchatUsDlg 对话框
 class CchatUsDlg : public CDialogEx
@@ -36,6 +36,6 @@ public:
 	afx_msg void OnBnClickedConnectBtn();
 	afx_msg void OnBnClickedDisconnectBtn();
 	CMySocket* m_sockCli;
-	CTime m_time;
 	CListBox m_msgListBox;
+	afx_msg void OnBnClickedSendBtn();
 };

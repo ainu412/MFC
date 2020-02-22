@@ -68,6 +68,7 @@ BEGIN_MESSAGE_MAP(CchatUsDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_CONNECT_BTN, &CchatUsDlg::OnBnClickedConnectBtn)
 	ON_BN_CLICKED(IDC_DISCONNECT_BTN, &CchatUsDlg::OnBnClickedDisconnectBtn)
+	ON_BN_CLICKED(IDC_SEND_BTN, &CchatUsDlg::OnBnClickedSendBtn)
 END_MESSAGE_MAP()
 
 
@@ -182,13 +183,12 @@ void CchatUsDlg::OnBnClickedConnectBtn()
 	{
 		TRACE("m_sockCli create error: %d", GetLastError());
 	}
-	else
-	{
-		TRACE("m_sockCLi create success");
-	}
 	//连接
 	int iPort = _ttoi(strPort);
-	m_sockCli->Connect(strIP, iPort);
+	if (m_sockCli->Connect(strIP, iPort) == SOCKET_ERROR)
+	{
+		TRACE("m_sockCli connect error: %d", GetLastError());
+	}
 
 }
 
@@ -196,4 +196,32 @@ void CchatUsDlg::OnBnClickedConnectBtn()
 void CchatUsDlg::OnBnClickedDisconnectBtn()
 {
 	// TODO: 在此添加控件通知处理程序代码
+}
+
+
+void CchatUsDlg::OnBnClickedSendBtn()
+{
+	CString strShow;
+	// 1.获取编辑框内容
+	GetDlgItem(IDC_RESMSG_EDIT)->GetWindowTextW(strShow);
+	USES_CONVERSION;
+	char* cpMsg = T2A(strShow);
+
+	// 2.发送给服务端(记得转为char*发送)
+
+	// 点发送后为啥没有接收呢??发送成功了啊..
+	m_sockCli->Send(cpMsg, SEND_MAX_BUF, 0);
+
+	TRACE("[chatUsDlg]OnBnClickedSendBtn() send characters: %s", cpMsg);
+
+	// 3.显示到m_list框
+	CTime m_time = CTime::GetCurrentTime();
+	strShow = m_time.Format("%X") + _T("我: ") + strShow;
+	m_msgListBox.AddString(strShow);
+
+	UpdateData(FALSE);
+
+	//清空m_list框
+	GetDlgItem(IDC_RESMSG_EDIT)->SetWindowTextW(_T(""));
+
 }

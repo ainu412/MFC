@@ -69,6 +69,7 @@ BEGIN_MESSAGE_MAP(CchatSrvDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_START_BTN, &CchatSrvDlg::OnBnClickedStartBtn)
+	ON_BN_CLICKED(IDC_SEND_BTN, &CchatSrvDlg::OnBnClickedSendBtn)
 END_MESSAGE_MAP()
 
 
@@ -166,7 +167,7 @@ void CchatSrvDlg::OnBnClickedStartBtn()
 	CString strIP, strPort;
 	GetDlgItem(IDC_PORT_EDIT)->GetWindowText(strPort);
 	USES_CONVERSION;
-	LPCSTR cpPort = (LPCSTR)T2A(strPort);
+	LPCSTR cpPort = T2A(strPort);
 	TRACE("[chatSrv]port:%s", cpPort);
 	int iPort = _ttoi(strPort);
 
@@ -183,10 +184,31 @@ void CchatSrvDlg::OnBnClickedStartBtn()
 		TRACE("m_sockSrv listen error:%d", GetLastError());
 		return;
 	}
-	m_time = CTime::GetCurrentTime();
+	CTime m_time = CTime::GetCurrentTime();
 	CString str_tm = m_time.Format("%X");
 	str_tm += _T("建立服务");
+
 	m_msgListBox.AddString(str_tm);
 
 	UpdateData(FALSE);//??把控件上内容更新至数据??
+}
+
+
+void CchatSrvDlg::OnBnClickedSendBtn()
+{
+	// 取得编辑框发送内容
+	CString strMsg;
+	GetDlgItem(IDC_MSG_EDIT)->GetWindowTextW(strMsg);
+
+	USES_CONVERSION;
+	LPCSTR cpMsg = T2A(strMsg);
+	m_sockChat->Send(cpMsg, SEND_MAX_BUF, 0);
+
+	CTime m_time = CTime::GetCurrentTime();
+	strMsg = m_time.Format("%X") + "服务端发送: " + strMsg;
+	// 添加到listBox
+	m_msgListBox.AddString(strMsg);
+	// 清空编辑框内容
+	GetDlgItem(IDC_MSG_EDIT)->SetWindowTextW(_T(""));
+
 }
