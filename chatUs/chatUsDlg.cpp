@@ -109,7 +109,7 @@ BOOL CchatUsDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-	GetDlgItem(IDC_IPADDRESS)->SetWindowText(_T("127.0.0.1"));
+	GetDlgItem(IDC_IPADDRESS)->SetWindowText(_T("192.168.1.109"));
 	GetDlgItem(IDC_PORT_EDIT)->SetWindowText(_T("5000"));
 
 	//显示当前昵称,每次打开时从配置文件中读取
