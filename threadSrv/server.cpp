@@ -22,10 +22,12 @@ int connCnt = 0;
 
 void sendMsg(char* msg, int nLen)
 {
+	WaitForSingleObject(hMutex, INFINITE);
 	for (size_t i = 0; i < connCnt; i++)
 	{
-		send(sockConns[i], msg, nLen, 0);// LOCK
+		send(sockConns[i], msg, nLen, 0);
 	}
+	ReleaseMutex(hMutex);
 }
 
 unsigned WINAPI hConn(void* arg)
@@ -41,6 +43,7 @@ unsigned WINAPI hConn(void* arg)
 	}
 
 	// 将此连接断开
+	WaitForSingleObject(hMutex, INFINITE);
 	for (size_t i = 0; i < connCnt; i++)
 	{
 		if (sockConn == sockConns[i])
@@ -55,7 +58,7 @@ unsigned WINAPI hConn(void* arg)
 			break;
 		}
 	}
-
+	ReleaseMutex(hMutex);
 	return 0;
 }
 
@@ -87,13 +90,18 @@ int main()
 	listen(sockSrv, MAX_BACKLOG);
 	// 新建客户套接字地址供接收
 	SOCKADDR_IN addrCli;
+	// 新建互斥体
+	hMutex = CreateMutex(NULL, FALSE, NULL);
+
 	// 接收并发送
 	while (true)
 	{		
 		SOCKET sockConn = accept(sockSrv, (SOCKADDR*)&addrCli, &len);
 
 		// 加入连接套接字组
-		sockConns[connCnt++] = sockConn;// LOCK
+		WaitForSingleObject(hMutex, INFINITE);
+		sockConns[connCnt++] = sockConn;
+		ReleaseMutex(hMutex);
 		// 开始套接字函数的线程,传入连接参数
 		HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, hConn, &sockConn, 0, NULL);
 #if 0
@@ -106,6 +114,7 @@ int main()
 		closesocket(sockConn);
 	}
 	// 关闭并清理资源
+	CloseHandle(hMutex);
 	WSACleanup();
 	closesocket(sockSrv);
 
