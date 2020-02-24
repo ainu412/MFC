@@ -64,7 +64,7 @@ int main()
 #if 0//线程随进程结束
 unsigned __stdcall ThreadFunc(LPVOID arg)
 {
-	for (size_t i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		cout << "running thread" << endl;
 	}
@@ -92,7 +92,7 @@ int main()
 unsigned __stdcall ThreadFunc(LPVOID arg)
 {
 	int cnt = *(int*)arg;
-	for (size_t i = 0; i < cnt; i++)
+	for (int i = 0; i < cnt; i++)
 	{
 		cout << "running thread" << endl;
 		Sleep(500);
@@ -132,7 +132,7 @@ int main()
 	HANDLE hThread[THREAD_NUM];
 	hMutex = CreateMutex(NULL, FALSE, NULL);//无特定对象
 
-	for (size_t i = 0; i < THREAD_NUM; i++)
+	for (int i = 0; i < THREAD_NUM; i++)
 	{
 		if (i % 2)
 		{
@@ -155,7 +155,7 @@ unsigned WINAPI main_thread_add1(LPVOID arg)
 {
 	WaitForSingleObject(hMutex, INFINITE);
 
-	for (size_t i = 0; i < ADD_TIMES; i++)
+	for (int i = 0; i < ADD_TIMES; i++)
 	{
 		num++;
 	}
@@ -168,7 +168,7 @@ unsigned WINAPI main_thread_substract1(LPVOID arg)
 {
 	WaitForSingleObject(hMutex, INFINITE);
 
-	for (size_t i = 0; i < ADD_TIMES; i++)
+	for (int i = 0; i < ADD_TIMES; i++)
 	{
 		num--;
 	}
@@ -177,6 +177,7 @@ unsigned WINAPI main_thread_substract1(LPVOID arg)
 	return 0;
 }
 #endif
+#if 0
 //WaitForMultipleObjects
 //起两个线程，一个加+1，一个减1
 #define ADD_TIMES 50000
@@ -185,7 +186,7 @@ unsigned WINAPI main_thread_substract1(LPVOID arg)
 long long num = 0;
 unsigned __stdcall main_thread_add1(LPVOID arg)
 {
-	for (size_t i = 0; i < ADD_TIMES; i++)
+	for (int i = 0; i < ADD_TIMES; i++)
 	{
 		num++;
 	}
@@ -193,7 +194,7 @@ unsigned __stdcall main_thread_add1(LPVOID arg)
 }
 unsigned __stdcall main_thread_substract1(LPVOID arg)
 {
-	for (size_t i = 0; i < ADD_TIMES; i++)
+	for (int i = 0; i < ADD_TIMES; i++)
 	{
 		num--;
 	}
@@ -205,7 +206,7 @@ int main()
 	//hThread[0] = (HANDLE)_beginthreadex(NULL, 0, main_thread_add1, NULL, 0, NULL);
 	//hThread[1] = (HANDLE)_beginthreadex(NULL, 0, main_thread_substract1, NULL, 0, NULL);
 
-	for (size_t i = 0; i < THREAD_NUM; i++)
+	for (int i = 0; i < THREAD_NUM; i++)
 	{
 		if (i%2)
 		{
@@ -221,3 +222,274 @@ int main()
 	cout << "Final num = " << num << endl;
 	return 0;
 }
+#endif
+#if 0// 事件对象
+// gets(str[i])如果是A则加一
+#define MAX_STR 1024
+static char str[MAX_STR];
+static HANDLE hEvent;
+
+unsigned WINAPI threadA(void* arg)
+{
+	WaitForSingleObject(hEvent, INFINITE);
+	int cnt = 0;
+	for (size_t i = 0; str[i] != 0; i++)
+	{
+		if (str[i] == 'A')
+		{
+			cnt++;
+		}
+	}
+	printf("Number of A: %d", cnt);
+	return 0;
+}
+//如果不为A则加一
+unsigned WINAPI threadNA(void* arg)
+{
+	//WaitForSingleObject(hEvent, INFINITE);
+	int cnt = 0;
+	for (size_t i = 0; str[i] != 0; i++)
+	{
+		if (str[i] != 'A' && str[i] != '\n')
+		{
+			cnt++;
+		}
+	}
+	printf("Number of not A: %d", cnt);
+	SetEvent(hEvent);
+	return 0;
+}
+
+int main()
+{
+	// 准备线程
+	HANDLE hThread[2];
+	// 获得控制台输入字符
+	fputs("Please input string :", stdout);
+	fgets(str, MAX_STR, stdin);
+	// 开启线程
+	hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	hThread[0] = (HANDLE)_beginthreadex(NULL, 0, threadA, NULL, 0, NULL);
+	hThread[1] = (HANDLE)_beginthreadex(NULL, 0, threadNA, NULL, 0, NULL);
+	// 等待线程结束
+	WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
+	// 清理资源
+	ResetEvent(hEvent);
+	CloseHandle(hEvent);
+
+	return 0;
+}
+#endif
+//#if 0//event事件互斥
+static HANDLE hEvent;
+static int iTickets = 100;//共卖100张票
+unsigned WINAPI selA(LPVOID arg)
+{
+	while (iTickets > 0)
+	{
+		WaitForSingleObject(hEvent, INFINITE);
+		Sleep(1);//保证顺序
+		if (iTickets == 0)
+		{
+			break;
+		}
+		iTickets--;
+		printf("A iTickets = %d\n", iTickets);
+		SetEvent(hEvent);
+	}
+	return 0;
+}
+unsigned WINAPI selB(LPVOID arg)
+{
+	while (TRUE)
+	{
+		WaitForSingleObject(hEvent, INFINITE);//等待处于启动状态后再执行
+		//Sleep(1);一次之能有一个执行,休眠短的可接收到自己的启动,卖的多
+		if (iTickets == 0)
+		{
+			break;
+		}
+		iTickets--;
+		printf("B iTickets = %d\n", iTickets);
+		SetEvent(hEvent);//另一函数严阵以待,故set以后先执行严阵以待的函数
+	}
+	return 0;
+}
+int main()
+{
+	HANDLE hThread[2];
+	//hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	hThread[0] = (HANDLE)_beginthreadex(NULL, 0, selA, NULL, 0, NULL);
+	hThread[1] = (HANDLE)_beginthreadex(NULL, 0, selB, NULL, 0, NULL);
+	//SetEvent(hEvent);
+	hEvent = CreateEvent(NULL, TRUE, TRUE, NULL);//manual set自己让线程释放event,自己设为有信号状态; 人工就是线程结束return 0后自动设为有信号状态
+
+	WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
+	ResetEvent(hEvent);
+	CloseHandle(hEvent);
+	
+	return 0;
+}
+//#endif
+#if 0//信号量
+//增加输入数值
+//一线程取得输入数值存入全局num
+//另一线程实现相加
+static int num = 0;
+HANDLE hSema;
+
+unsigned __stdcall getNum(LPVOID arg)
+{
+	for (size_t i = 0; i < 5; i++)
+	{
+		WaitForSingleObject(hSema, INFINITE);
+		printf("Please input num:");
+		scanf_s("%d", &num);
+		ReleaseSemaphore(hSema, 1, 0);
+	}
+	return 0;
+}
+unsigned __stdcall getSum(LPVOID arg)
+{
+	int sum = 0;
+	for (size_t i = 0; i < 5; i++)
+	{
+		WaitForSingleObject(hSema, INFINITE);
+		sum += num;
+		ReleaseSemaphore(hSema, 1, 0);
+	}
+	printf("sum =%d", sum);
+	return 0;
+}
+int main()
+{
+	hSema = CreateSemaphore(NULL, 1, 2, NULL);
+
+	//HANDLE hThread[2];
+	//hThread[0]=
+	_beginthreadex(NULL, 0, getNum, NULL, 0, NULL);
+	HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, getSum, NULL, 0, NULL);
+
+	//OpenThread()
+	// 等待线程结束
+	WaitForSingleObject(hThread, INFINITE);
+
+	// 清理资源
+	CloseHandle(hSema);
+
+	return 0;
+}
+#endif
+#if 0
+static int num = 0;
+HANDLE hSema1, hSema2;
+
+unsigned __stdcall getNum(LPVOID arg)//getnum不用等getsum??
+{
+	ReleaseSemaphore(hSema1, 1, 0);//可以改为初始时刻就释放一个
+	for (size_t i = 0; i < 2; i++)
+	{
+		WaitForSingleObject(hSema1, INFINITE);//一旦等到, 释放量-1, 释放量+初始量=0, 需要再次释放才能等到
+		printf("Please input num:");
+		scanf_s("%d", &num);
+		ReleaseSemaphore(hSema2, 1, 0);
+	}
+	return 0;
+}
+unsigned __stdcall getSum(LPVOID arg)
+{
+	int sum = 0;
+	for (size_t i = 0; i < 2; i++)
+	{
+		WaitForSingleObject(hSema2, INFINITE);
+		sum += num;
+		ReleaseSemaphore(hSema1, 1, 0);
+	}
+	printf("sum =%d", sum);
+	return 0;
+}
+int main()
+{
+	hSema1 = CreateSemaphore(NULL, 0, 1, NULL);
+	hSema2 = CreateSemaphore(NULL, 0, 1, NULL);
+	//HANDLE hThread[2];
+	//hThread[0]=
+	unsigned threadID;
+	_beginthreadex(NULL, 0, getNum, NULL, 0, NULL);
+	HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, getSum, NULL, 0, NULL);
+
+	//OpenThread()
+	// 等待线程结束
+	WaitForSingleObject(hThread, INFINITE);
+
+	// 清理资源
+	CloseHandle(hSema1);
+	CloseHandle(hSema2);
+	CloseHandle(hThread);
+
+	return 0;
+}
+#endif
+#if 0
+//关键代码段
+// 保证一次只能一个工作, 但无法保证交替工作
+CRITICAL_SECTION g_cs;
+static HANDLE hEvent;
+static int iTickets = 100;//共卖100张票
+unsigned WINAPI selA(LPVOID arg)
+{
+	while (iTickets > 0)
+	{
+		//WaitForSingleObject(hEvent, INFINITE);
+		EnterCriticalSection(&g_cs);
+		//Sleep(1);//保证顺序
+		if (iTickets == 0)
+		{
+			LeaveCriticalSection(&g_cs);
+			break;
+		}
+		iTickets--;
+		printf("A iTickets = %d\n", iTickets);
+		//SetEvent(hEvent);
+		LeaveCriticalSection(&g_cs);
+	}
+	return 0;
+}
+unsigned WINAPI selB(LPVOID arg)
+{
+	while (TRUE)
+	{
+		//WaitForSingleObject(hEvent, INFINITE);//等待处于启动状态后再执行
+		EnterCriticalSection(&g_cs);
+		//Sleep(1);一次之能有一个执行,休眠短的可接收到自己的启动,卖的多
+		if (iTickets == 0)
+		{
+			LeaveCriticalSection(&g_cs);
+			break;
+		}
+		iTickets--;
+		printf("B iTickets = %d\n", iTickets);
+		//SetEvent(hEvent);//另一函数严阵以待,故set以后先执行严阵以待的函数
+		LeaveCriticalSection(&g_cs);
+	}
+	return 0;
+}
+int main()
+{
+	HANDLE hThread[2];
+	//hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	hThread[0] = (HANDLE)_beginthreadex(NULL, 0, selA, NULL, 0, NULL);
+	hThread[1] = (HANDLE)_beginthreadex(NULL, 0, selB, NULL, 0, NULL);
+	//SetEvent(hEvent);
+	//hEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	InitializeCriticalSection(&g_cs);
+	WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
+	//ResetEvent(hEvent);
+	//CloseHandle(hEvent);
+	CloseHandle(hThread[0]);//为啥不用关了??
+	CloseHandle(hThread[1]);//不能关指针,只能一个一个关
+	//CloseHandle(*hThread);//不知道关了一个还是关了俩..反正好用了...
+	DeleteCriticalSection(&g_cs);
+	return 0;
+}
+#endif
