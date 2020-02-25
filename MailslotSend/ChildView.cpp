@@ -16,22 +16,27 @@
 
 CChildView::CChildView()
 {
-	hAnoPipeRead = GetStdHandle(STD_INPUT_HANDLE);
-	hAnoPipeWrite = GetStdHandle(STD_OUTPUT_HANDLE);
-
+	m_hAnoPipeRead = GetStdHandle(STD_INPUT_HANDLE);
+	m_hAnoPipeWrite = GetStdHandle(STD_OUTPUT_HANDLE);
+	m_hNamedPipe = NULL;
 }
 
 CChildView::~CChildView()
 {
-	if (hAnoPipeRead)
+	if (m_hAnoPipeRead)
 	{
-		CloseHandle(hAnoPipeRead);
-		hAnoPipeRead = NULL;
+		CloseHandle(m_hAnoPipeRead);
+		m_hAnoPipeRead = NULL;
 	}
-	if (hAnoPipeWrite)
+	if (m_hAnoPipeWrite)
 	{
-		CloseHandle(hAnoPipeWrite);
-		hAnoPipeWrite = NULL;
+		CloseHandle(m_hAnoPipeWrite);
+		m_hAnoPipeWrite = NULL;
+	}
+	if (m_hNamedPipe)
+	{
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
 	}
 }
 
@@ -41,6 +46,9 @@ BEGIN_MESSAGE_MAP(CChildView, CWnd)
 	ON_COMMAND(ID_SEND_SLOT, &CChildView::OnSendSlot)
 	ON_COMMAND(ID_ANONYMOUS_PIPE_SEND, &CChildView::OnAnonymousPipeSend)
 	ON_COMMAND(ID_ANONYMOUS_PIPE_RECV, &CChildView::OnAnonymousPipeRecv)
+	ON_COMMAND(ID_NAMED_PIPE_SEND, &CChildView::OnNamedPipeSend)
+	ON_COMMAND(ID_NAMED_PIPE_RECV, &CChildView::OnNamedPipeRecv)
+	ON_COMMAND(ID_NAMED_PIPE_CONNECT, &CChildView::OnNamedPipeConnect)
 END_MESSAGE_MAP()
 
 
@@ -97,7 +105,7 @@ void CChildView::OnSendSlot()
 void CChildView::OnAnonymousPipeSend()
 {
 	char sendBuf[128] = "客户端子进程发送";
-	if (!WriteFile(hAnoPipeWrite, sendBuf, 128, NULL, NULL))
+	if (!WriteFile(m_hAnoPipeWrite, sendBuf, 128, NULL, NULL))
 	{
 		MessageBox(L"写入失败!");//L与_T()都行
 		return;
@@ -108,7 +116,7 @@ void CChildView::OnAnonymousPipeSend()
 void CChildView::OnAnonymousPipeRecv()
 {
 	char recvBuf[128] = { 0 };
-	if (!ReadFile(hAnoPipeRead, recvBuf, 128, NULL, NULL))
+	if (!ReadFile(m_hAnoPipeRead, recvBuf, 128, NULL, NULL))
 	{
 		MessageBox(L"读取失败!");
 		return;
@@ -116,5 +124,58 @@ void CChildView::OnAnonymousPipeRecv()
 	else
 	{
 		MessageBox((CStringW)recvBuf);
+	}
+}
+
+
+void CChildView::OnNamedPipeSend()
+{
+	char sendBuf[1024] = "命名管道客户君说:肉肉最傻啦!";
+	if (!WriteFile(m_hNamedPipe, sendBuf, 1024, NULL, NULL))
+	{
+		MessageBox(L"写入失败!");
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
+		return;
+	}
+}
+
+
+void CChildView::OnNamedPipeRecv()
+{
+	char recvBuf[1024] = { 0 };
+	if (!ReadFile(m_hNamedPipe, recvBuf, 1024, NULL, NULL))
+	{
+		MessageBox(L"读取失败!");
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
+		return;
+	}
+	MessageBox((CStringW)recvBuf);
+}
+
+
+void CChildView::OnNamedPipeConnect()
+{
+	// 等待命名管道
+	LPCTSTR szName = TEXT("\\\\.\\pipe\\MyNamedPipe");
+	if (!WaitNamedPipe(szName, INFINITE))
+	{
+		MessageBox(L"等待命名管道失败!");
+		TRACE("等待命名管道失败!error code %d", GetLastError());
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
+		return;
+	}
+	
+	// 新建文件接收h命名管道
+	m_hNamedPipe = CreateFile(szName, GENERIC_WRITE | GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+	if (INVALID_HANDLE_VALUE == m_hNamedPipe)////仅此写入与接收, 服务端是创建, 故阻止共享
+	{
+		MessageBox(L"文件创建失败!");
+		TRACE("文件创建失败!error code %d", GetLastError());
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
+		return;
 	}
 }

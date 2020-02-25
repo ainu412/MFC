@@ -37,7 +37,13 @@ public:
 	afx_msg void OnAnonymousPipeSend();
 	afx_msg void OnAnonymousPipeRecv();
 protected:
-	HANDLE hAnoPipeRead;
-	HANDLE hAnoPipeWrite;
+	HANDLE m_hAnoPipeRead;
+	HANDLE m_hAnoPipeWrite;
+public:
+	afx_msg void OnNamedPipeSend();
+	afx_msg void OnNamedPipeRecv();
+	afx_msg void OnNamedPipeConnect();
+protected:
+	HANDLE m_hNamedPipe;
 };
 

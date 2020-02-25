@@ -16,21 +16,27 @@
 
 CChildView::CChildView()
 {
-	hAnoPipeWrite = NULL;
-	hAnoPipeRead = NULL;
+	m_hAnoPipeWrite = NULL;
+	m_hAnoPipeRead = NULL;
+	m_hNamedPipe = NULL;
 }
 
 CChildView::~CChildView()
 {
-	if (hAnoPipeRead)
+	if (m_hAnoPipeRead)
 	{
-		CloseHandle(hAnoPipeRead);
-		hAnoPipeRead = NULL;
+		CloseHandle(m_hAnoPipeRead);
+		m_hAnoPipeRead = NULL;
 	}
-	if (hAnoPipeWrite)
+	if (m_hAnoPipeWrite)
 	{
-		CloseHandle(hAnoPipeWrite);
-		hAnoPipeWrite = NULL;
+		CloseHandle(m_hAnoPipeWrite);
+		m_hAnoPipeWrite = NULL;
+	}
+	if (m_hNamedPipe)
+	{
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
 	}
 }
 
@@ -41,6 +47,9 @@ BEGIN_MESSAGE_MAP(CChildView, CWnd)
 	ON_COMMAND(ID_ANONYMOUS_PIPE_CREATE, &CChildView::OnAnonymousPipeCreate)
 	ON_COMMAND(ID_ANONYMOUS_PIPE_SEND, &CChildView::OnAnonymousPipeSend)
 	ON_COMMAND(ID_ANONYMOUS_PIPE_RECV, &CChildView::OnAnonymousPipeRecv)
+	ON_COMMAND(ID_NAMED_PIPE_SEND, &CChildView::OnNamedPipeSend)
+	ON_COMMAND(ID_NAMED_PIPE_RECV, &CChildView::OnNamedPipeRecv)
+	ON_COMMAND(ID_NAMED_PIPE_CREATE, &CChildView::OnNamedPipeCreate)
 END_MESSAGE_MAP()
 
 
@@ -98,16 +107,16 @@ void CChildView::OnRecvSlot()
 void CChildView::OnAnonymousPipeCreate()
 {	
 	// 新建匿名邮槽
-	//HANDLE hAnoPipeRead,hAnoPipeWrite;发送接收函数中扔要使用,故设为成员变量
+	//HANDLE m_hAnoPipeRead,m_hAnoPipeWrite;发送接收函数中扔要使用,故设为成员变量
 	SECURITY_ATTRIBUTES PipeAttributes;
 	PipeAttributes.bInheritHandle = TRUE;
 	PipeAttributes.nLength = sizeof(SECURITY_ATTRIBUTES);
 	PipeAttributes.lpSecurityDescriptor = NULL;
-	if (!CreatePipe(&hAnoPipeRead, &hAnoPipeWrite, &PipeAttributes, 0))
+	if (!CreatePipe(&m_hAnoPipeRead, &m_hAnoPipeWrite, &PipeAttributes, 0))
 	{
 		MessageBox(L"邮槽创建失败!");
-		//CloseHandle(hAnoPipeWrite);
-		//CloseHandle(hAnoPipeRead);
+		//CloseHandle(m_hAnoPipeWrite);
+		//CloseHandle(m_hAnoPipeRead);
 		return;
 	}
 	//创建子进程
@@ -115,8 +124,8 @@ void CChildView::OnAnonymousPipeCreate()
 	memset(&StartupInfo, 0, sizeof(StartupInfo));
 	StartupInfo.cb = sizeof(STARTUPINFO);
 	StartupInfo.hStdError = GetStdHandle(STD_ERROR_HANDLE);//记得取得标准把手!
-	StartupInfo.hStdInput = hAnoPipeRead;
-	StartupInfo.hStdOutput = hAnoPipeWrite;// 输出是写!!
+	StartupInfo.hStdInput = m_hAnoPipeRead;
+	StartupInfo.hStdOutput = m_hAnoPipeWrite;// 输出是写!!
 	StartupInfo.dwFlags = STARTF_USESTDHANDLES;
 	PROCESS_INFORMATION ProcessInformation;
 	memset(&ProcessInformation, 0, sizeof(PROCESS_INFORMATION));
@@ -134,10 +143,10 @@ void CChildView::OnAnonymousPipeCreate()
 	else
 	{
 		MessageBox(L"子进程创建失败!");
-		CloseHandle(hAnoPipeRead);
-		CloseHandle(hAnoPipeWrite);
-		hAnoPipeWrite = NULL;
-		hAnoPipeRead = NULL;
+		CloseHandle(m_hAnoPipeRead);
+		CloseHandle(m_hAnoPipeWrite);
+		m_hAnoPipeWrite = NULL;
+		m_hAnoPipeRead = NULL;
 	}
 }
 
@@ -145,7 +154,7 @@ void CChildView::OnAnonymousPipeCreate()
 void CChildView::OnAnonymousPipeSend()
 {
 	char sendBuf[128] = "服务端发送";
-	if (!WriteFile(hAnoPipeWrite, sendBuf, 128, NULL, NULL)) {
+	if (!WriteFile(m_hAnoPipeWrite, sendBuf, 128, NULL, NULL)) {
 		MessageBox(L"写入失败!");
 		return;
 	}
@@ -159,7 +168,7 @@ void CChildView::OnAnonymousPipeSend()
 void CChildView::OnAnonymousPipeRecv()
 {
 	char recvBuf[128] = { 0 };
-	if (!ReadFile(hAnoPipeRead, recvBuf, 128, NULL, NULL))
+	if (!ReadFile(m_hAnoPipeRead, recvBuf, 128, NULL, NULL))
 	{
 		MessageBox(L"读取失败!");
 		return;
@@ -168,4 +177,78 @@ void CChildView::OnAnonymousPipeRecv()
 	{
 		MessageBox((CStringW)recvBuf);
 	}
+}
+
+void CChildView::OnNamedPipeCreate()
+{
+	// 新建命名管道
+	LPCTSTR szName = TEXT("\\\\.\\pipe\\MyNamedPipe");
+	m_hNamedPipe = CreateNamedPipe(szName, PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED,
+		PIPE_TYPE_BYTE, 1, 1024, 1024, 0, NULL);
+	if (INVALID_HANDLE_VALUE == m_hNamedPipe)
+	{
+		MessageBox(L"命名管道创建失败!");
+		TRACE("命名管道创建失败!error code %d", GetLastError());
+		return;
+	}
+	// 等待连接命名管道
+	HANDLE hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);//每一个create后都要判断
+	if (0 == hEvent)
+	{
+		MessageBox(L"事件创建失败!");
+		TRACE("事件创建失败!error code %d", GetLastError());
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
+		return;
+	}
+	OVERLAPPED Overlapped;
+	ZeroMemory(&Overlapped, sizeof(OVERLAPPED));//记得初始化为0哇!!
+	Overlapped.hEvent = hEvent;
+	if (0 == ConnectNamedPipe(m_hNamedPipe, &Overlapped))
+	{
+		if (ERROR_IO_PENDING != GetLastError())//用户悬而未决时可以继续等待的啦
+		{
+			MessageBox(L"命名管道开始等待连接失败(重叠I/0操作正在进行中)!");
+			CloseHandle(m_hNamedPipe);
+			m_hNamedPipe = NULL;
+			CloseHandle(hEvent);
+			hEvent = NULL;
+			return;
+		}
+	}
+	if (WAIT_FAILED == WaitForSingleObject(hEvent, INFINITE))
+	{
+		MessageBox(L"命名管道等待对象创建失败!");
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
+		CloseHandle(hEvent);
+		hEvent = NULL;
+		return;
+	}
+}
+
+void CChildView::OnNamedPipeSend()
+{
+	char sendBuf[1024] = "命名管道服务君说:肉肉最可爱啦!";
+	if (!WriteFile(m_hNamedPipe, sendBuf, 1024, NULL, NULL))
+	{
+		MessageBox(L"写入失败!");
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
+		return;
+	}
+}
+
+
+void CChildView::OnNamedPipeRecv()
+{
+	char recvBuf[1024] = { 0 };
+	if (!ReadFile(m_hNamedPipe, recvBuf, 1024, NULL, NULL))
+	{
+		MessageBox(L"读取失败!");
+		CloseHandle(m_hNamedPipe);
+		m_hNamedPipe = NULL;
+		return;
+	}
+	MessageBox((CStringW)recvBuf);
 }
