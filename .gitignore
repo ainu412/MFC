@@ -353,3 +353,4 @@ MigrationBackup/
 *.vcxproj
 *.filters
 *.sln
+/MyMFCFile

@@ -1,0 +1,4 @@
+LIBRARY MyDllDynamicLoading
+
+EXPORTS
+rttPrint
